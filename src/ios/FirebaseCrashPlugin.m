@@ -22,12 +22,33 @@
 }
 
 - (void)logError:(CDVInvokedUrlCommand*)command {
-    NSString *description = NSLocalizedString([command argumentAtIndex:0 withDefault:@"No Message Provided"], nil);
-    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey: description };
-    NSNumber *defaultCode = [NSNumber numberWithInt:-1];
-    int code = [[command argumentAtIndex:1 withDefault:defaultCode] intValue];
     NSString *domain = [[NSBundle mainBundle] bundleIdentifier];
-    NSError *error = [NSError errorWithDomain:domain code:code userInfo:userInfo];
+    NSMutableDictionary* userInfo = [[NSMutableDictionary alloc] init];
+    NSString *uiDescription = NSLocalizedString(@"Description", nil),
+    userInfo[uiDescription] = NSLocalizedString([command argumentAtIndex:0 withDefault:@"No Message Provided"], nil);
+    
+    if ([command.arguments count] > 1) { 
+        NSArray* stackFrames = [command.arguments objectAtIndex:1];
+        for (NSDictionary* stackFrame in stackFrames) {
+            
+            NSString *sfSymbol = NSLocalizedString(@"Symbol", nil),
+            userInfo[sfSymbol] = stackFrame[@"functionName"];
+
+            NSString *sfFilename = NSLocalizedString(@"Filename", nil),
+            userInfo[sfFilename] = stackFrame[@"fileName"];
+
+            NSString *sfLibrary = NSLocalizedString(@"Library", nil),
+            userInfo[sfLibrary] = stackFrame[@"source"];
+
+            NSString *sfOffset = NSLocalizedString(@"Offset", nil),
+            userInfo[sfOffset] = (uint64_t) [stackFrame[@"columnNumber"] intValue];
+
+            NSString *sfLineNumber = NSLocalizedString(@"LineNumber", nil),
+            userInfo[sfLineNumber] = (uint32_t) [stackFrame[@"lineNumber"] intValue]];
+        }
+    }
+
+    NSError *error = [NSError errorWithDomain:domain code:-1 userInfo:userInfo];
 
     [[FIRCrashlytics crashlytics] recordError:error];
 
