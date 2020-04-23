@@ -30,6 +30,36 @@ If you get an error about CocoaPods being unable to find compatible versions, ru
 
 Use variable `FIREBASE_CRASHLYTICS_VERSION` to override dependency version on Android.
 
+On Android manual configuration IS REQUIRED.
+Add this to your _android/build.gradle_
+```
+buildscript {
+    repositories {
+        google()
+    }
+
+    dependencies {
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.0.0-beta03'
+    }
+}
+```
+
+Add this to your _android/app/build.gradle_
+```
+// Apply the Crashlytics Gradle plugin
+apply plugin: 'com.google.firebase.crashlytics'
+android {
+    buildTypes {
+        debug {
+            // do not upload debug versions to crashlytics
+            firebaseCrashlytics {
+                mappingFileUploadEnabled false
+            }
+        }
+    }
+}
+```
+
 ## Disable data collection
 In some cases, you may wish to temporarily or permanently disable collection of crash data. You can set the value of variable `FIREBASE_CRASHLYTICS_COLLECTION_ENABLED` to `false` to prevent collecting any user data:
 
