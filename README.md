@@ -28,7 +28,7 @@ If you get an error about CocoaPods being unable to find compatible versions, ru
     
     $ pod repo update
 
-Use variable `FIREBASE_CRASHLYTICS_VERSION` to override dependency version on Android.
+Use variables `IOS_FIREBASE_CRASHLYTICS_VERSION`  `ANDROID_FIREBASE_CRASHLYTICS_VERSION` to override dependency versions for Firebase SDKs.
 
 On Android manual configuration IS REQUIRED.
 Add this to your _android/build.gradle_
